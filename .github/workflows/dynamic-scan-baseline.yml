@@ -1,4 +1,4 @@
-name: Dynamic Baseline Scan
+name: Dynamic Full Scan
 
 on:
   #push:
@@ -11,7 +11,7 @@ permissions: # https://docs.github.com/en/actions/using-jobs/assigning-permissio
 
 jobs:
 
-  DAST-Baseline-Scan:
+  DAST-Full-Scan:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +20,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-          fetch-depth: 1
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -42,11 +41,11 @@ jobs:
       - name: Deploy Marathon for Local Integration Tests
         run: cd marathon || :; cd integration && ./start-integration.sh
 
-      # https://github.com/marketplace/actions/owasp-zap-baseline-scan
-      # https://www.zaproxy.org/docs/docker/baseline-scan/
-      - name: OWASP ZAP Baseline Scan
-        uses: zaproxy/action-baseline@7c4deb10e6261301961c86d65d54a516394f9aed
+      # https://www.zaproxy.org/docs/docker/full-scan/
+      - name: OWASP ZAP Full Scan
+        uses: zaproxy/action-full-scan@75ee1686750ab1511a73b26b77a2aedd295053ed
         with:
-          target: 'http://localhost:9090/marathon'
-          # rules_file_name: '.zap/rules.tsv'
-          # cmd_options: '-a'        
+          target: 'http://localhost:9090/marathon/showMarathons.page'
+          cmd_options: '-a'
+          rules_file_name: 'rules.tsv'
+ 
