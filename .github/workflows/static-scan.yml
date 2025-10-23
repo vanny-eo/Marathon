@@ -148,7 +148,7 @@ jobs:
           name: semgrep-scan-results.sarif
           path: /tmp/semgrep-results.sarif
  
-  # ======================================================
+# ======================================================
 
   collect-sarif-results: # Use github/codeql-action/upload-sarif action instead (when either public repo or CodeQL enabled in enterprise commercial repo)
     name: Collect Results
@@ -182,4 +182,10 @@ jobs:
           name: summary.html
           path: /tmp/summary.html
 
- 
+# ======================================================
+
+      - name: Write SBOM Summary to GitHub Step Summary
+        run: | # Bonus idea: use "curl" to post to you local Dependency-Track instance
+          echo "### 📦 SBOM Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          jq -r '.components[] | "- \(.name) \(.version) → \(.licenses[0].license.id // "Unknown")"' sarif-input/sbom-cyclonedx.json/bom.json >> $GITHUB_STEP_SUMMARY
